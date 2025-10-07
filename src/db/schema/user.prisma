@@ -1,0 +1,13 @@
+model User{
+    idUser String @id @default(cuid())
+    username String @unique
+    firstName String
+    lastName String
+    document Int @unique
+    email String @unique
+    password String //hashed
+    balance Float @default(0)
+    bought Int @default(0)
+    confirmed Int @default(0)
+    events  UserEvent[] 
+}

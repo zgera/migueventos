@@ -1,0 +1,12 @@
+model Event {
+    idEvent String @id @default(cuid())
+    title String 
+    date DateTime
+    description String
+    shortDescription String
+    direction String
+    Free Boolean
+    Cancelled Boolean @default(false)
+    price Float?
+    users   UserEvent[]
+}
