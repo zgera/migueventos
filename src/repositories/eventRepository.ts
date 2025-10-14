@@ -1,0 +1,40 @@
+import { Event } from "@prisma/client";
+
+import { db } from "../db/db";
+
+export class EventRepository {
+
+    static async createEvent(title: string, description: string, shortDescription: string, direction: string, date: Date, price: number | null, free: boolean): Promise<Event> {
+        const event = await db.event.create({
+            data: {
+                title,
+                date,
+                description,
+                shortDescription,
+                direction,
+                Free: free,
+                price: price
+            }
+        });
+        return event;
+    }
+
+    static async getEvents(): Promise<Event[]> {
+        return db.event.findMany({
+            where: { Cancelled: false, Completed: false }
+        });
+    }
+
+    static async getEventById(idEvent: string): Promise<Event | null> {
+        return db.event.findUnique({
+            where: { idEvent }
+        });
+    }
+
+    static async deleteEvent(idEvent: string): Promise<Event> {
+        const event = await db.event.delete({
+            where: { idEvent }
+        });
+        return event;
+    }
+}

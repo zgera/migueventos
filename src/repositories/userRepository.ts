@@ -24,6 +24,12 @@ export class UserRepository {
         });
     }
 
+    static async findById(idUser: string): Promise<User | null> {
+        return db.user.findUnique({
+            where: { idUser }
+        });
+    }
+
     static async updateBalance(userId: string, newBalance: number): Promise<User> {
         return db.user.update({
             where: { idUser : userId },

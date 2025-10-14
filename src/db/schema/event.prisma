@@ -8,5 +8,6 @@ model Event {
     Free Boolean
     Cancelled Boolean @default(false)
     price Float?
+    Completed Boolean @default(false)
     users   UserEvent[]
 }
