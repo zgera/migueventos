@@ -5,9 +5,12 @@ model Event {
     description String
     shortDescription String
     direction String
-    Free Boolean
-    Cancelled Boolean @default(false)
+    creatorID String
+    free Boolean
+    cancelled Boolean @default(false)
     price Float?
-    Completed Boolean @default(false)
-    users   UserEvent[]
+    completed Boolean @default(false)
+    users   Ticket[]
+    participants TicketDetail[]
+    user User @relation(fields: [creatorID], references: [idUser])
 }

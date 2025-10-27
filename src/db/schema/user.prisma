@@ -9,5 +9,6 @@ model User{
     balance Float @default(0)
     bought Int @default(0)
     confirmed Int @default(0)
-    events  UserEvent[] 
+    events  Ticket[]
+    myEvents Event[]
 }

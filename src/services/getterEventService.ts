@@ -1,4 +1,5 @@
-import { UserEventRepository } from "../repositories/userEventRepository";
+import { TicketRepository } from "../repositories/ticketRepository";
+import { TicketDetailRepository } from "../repositories/ticketDetailRepository";
 import { EventRepository } from "../repositories/eventRepository";
 import { AuthorizationService } from "./authorizationService";
 import { EventService } from "./eventService";
@@ -6,29 +7,50 @@ import { UserService } from "./userService";
 import { TokenData } from "../types/auth";
 import { Event } from "@prisma/client";
 import { User } from "@prisma/client";
+import { Ticket } from "@prisma/client";
+import { TicketDetail } from "@prisma/client";
 
 export class GetterEventService {
+    
 
-    private eventService: EventService = new EventService();
-    private userService: UserService = new UserService();
-
-    async getEventsByUser(token: TokenData): Promise<Event[]> {
-        const userEvents = await UserEventRepository.getUserEventsByUserId(token.userId);
-        const events = await Promise.all(userEvents.map(async (userEvent) => {
-            const event = await this.eventService.getEvent(userEvent.idEvent);
-            return event;
-        }));
-        return events;
+    async getTicket(ticketID: string): Promise<Ticket>{
+        const ticket = await TicketRepository.getTicket(ticketID)
+        if (!ticket){
+            throw new Error("No existe el ticket")
+        }
+        return ticket
     }
 
-    async getParticipantsByEvent(token: TokenData, idEvent: string): Promise<User[]> {
+    async getTicketsByUser(token: TokenData): Promise<Ticket[]> {
+        const tickets = await TicketRepository.getTicketByUserId(token.userId)
+        return tickets
+    }
+    
+    async getTicketDetail(token: TokenData, ticketID: string): Promise<TicketDetail[]>{
+
+        const ticket = await this.getTicket(ticketID)
+
+        if (ticket.idUser !== token.userId){
+            throw new Error("El ticket no es tuyo")
+        }
+
+        const ticketDetail = await TicketDetailRepository.getTicketDetailByTicket(ticketID)
+        return ticketDetail
+    }
+
+    async getTicketDetailsByEvent(token: TokenData, idEvent: string): Promise<TicketDetail[]>{
+        
+        await AuthorizationService.assertAdmin(token, idEvent)
+
+        const ticketDetails = await TicketDetailRepository.getTicketDetailByEvent(idEvent)
+
+        return ticketDetails
+    }
+
+    async getTicketsByEvent(token: TokenData, idEvent: string): Promise<Ticket[]> {
         await AuthorizationService.assertAdmin(token, idEvent);
-        const userEvents = await UserEventRepository.getUserEventsByEventId(idEvent);
-        const users = await Promise.all(userEvents.map(async (userEvent) => {
-            const user = await this.userService.getUserById(userEvent.idUser);
-            return user;
-        }));
-        return users;
+        const tickets = await TicketRepository.getTicketByEventId(idEvent);
+        return tickets
     }
 
     async getEvents(token: TokenData): Promise<Event[]> {
@@ -37,4 +59,5 @@ export class GetterEventService {
         }
         return EventRepository.getEvents();
     }
+
 }

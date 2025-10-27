@@ -1,11 +1,12 @@
-import { UserEventRepository } from "../repositories/userEventRepository";
+import { EventRepository } from "../repositories/eventRepository";
+import { TicketRepository } from "../repositories/ticketRepository";
 import { TokenData } from "../types/auth";
 
 
 export class AuthorizationService {
     static async isAdmin(token: TokenData, idEvent: string): Promise<boolean> {
-        const userEvent = await UserEventRepository.getUserEvent(token.userId, idEvent);
-        return userEvent?.admin || false;
+        const event = await EventRepository.getEventById(idEvent)
+        return event?.creatorID === token.userId
     }
 
     static async assertAdmin(token: TokenData, idEvent: string): Promise<void> {
@@ -16,8 +17,8 @@ export class AuthorizationService {
     }
 
     static async isParticipant(token: TokenData, idEvent: string): Promise<boolean> {
-        const userEvent = await UserEventRepository.getUserEvent(token.userId, idEvent);
-        return !!userEvent;
+        const ticket = await TicketRepository.getTicket(token.userId, idEvent);
+        return !!ticket;
     }
 
     static async assertParticipant(token: TokenData, idEvent: string): Promise<void> {

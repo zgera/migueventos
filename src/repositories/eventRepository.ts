@@ -4,7 +4,7 @@ import { db } from "../db/db";
 
 export class EventRepository {
 
-    static async createEvent(title: string, description: string, shortDescription: string, direction: string, date: Date, price: number | null, free: boolean): Promise<Event> {
+    static async createEvent(title: string, description: string, shortDescription: string, direction: string, date: Date, price: number | null, free: boolean, creatorID: string): Promise<Event> {
         const event = await db.event.create({
             data: {
                 title,
@@ -12,7 +12,8 @@ export class EventRepository {
                 description,
                 shortDescription,
                 direction,
-                Free: free,
+                creatorID: creatorID,
+                free: free,
                 price: price
             }
         });
@@ -21,7 +22,7 @@ export class EventRepository {
 
     static async getEvents(): Promise<Event[]> {
         return db.event.findMany({
-            where: { Cancelled: false, Completed: false }
+            where: { cancelled: false, completed: false }
         });
     }
 

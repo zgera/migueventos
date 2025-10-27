@@ -1,9 +1,11 @@
-model UserEvent {
-    idUserEvent String @id @default(cuid())
+model Ticket {
+    idTicket String @id @default(cuid())
     idUser String
     idEvent String
-    admin Boolean 
+    amount Int
+    participants Int
+    createdAt DateTime @default(now())
     user User @relation(fields: [idUser], references: [idUser])
     event Event @relation(fields: [idEvent], references: [idEvent], onDelete: Cascade)
-    createdAt DateTime @default(now())
+    detail TicketDetail[]
 }   

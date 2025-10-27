@@ -1,0 +1,11 @@
+model TicketDetail{
+    idTicketDetail String @id @default(cuid())
+    eventID String
+    ticketID String 
+    firstName String
+    lastName String
+    document Int
+    amount Int
+    event Event @relation(fields: [eventID], references: [idEvent])
+    ticket Ticket @relation(fields: [ticketID], references: [idTicket], onDelete: Cascade)
+}
