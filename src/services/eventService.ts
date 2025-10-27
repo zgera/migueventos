@@ -133,7 +133,10 @@ export class EventService {
     }
 
     async completeEvent(token: TokenData, idEvent: string): Promise<Event> {
-        //IMPLEMENTAR
-        throw new Error("Not implemented");
+        const event = await this.getEvent(idEvent);
+
+        await AuthorizationService.assertAdmin(token, idEvent)
+        
+        return await EventRepository.completeEvent(idEvent)
     }
 }

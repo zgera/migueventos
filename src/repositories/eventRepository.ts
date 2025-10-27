@@ -46,4 +46,12 @@ export class EventRepository {
         });
         return event;
     }
+
+    static async completeEvent(idEvent: string): Promise<Event> {
+        const event = await db.event.update({
+            where: {idEvent},
+            data: {completed: true}
+        })
+        return event
+    }
 }

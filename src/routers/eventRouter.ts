@@ -72,8 +72,7 @@ eventRouter.delete("/delete/:id", autenticarToken, async (req: Request, res: Res
 });
 
 /**
- * Completar un evento (marcar como finalizado)
- * ⚠️ Actualmente no implementado en el servicio
+ * Completar un evento (marcar como finalizado, SOLO ADMIN)
  */
 eventRouter.post("/complete/:id", autenticarToken, async (req: Request, res: Response) => {
     const token = req.user!;
