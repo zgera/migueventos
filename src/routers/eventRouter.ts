@@ -26,12 +26,12 @@ eventRouter.post("/access/:id", autenticarToken, async (req: Request, res: Respo
 /**
  * Abandonar un evento (devolver entrada o cancelar asistencia)
  */
-eventRouter.post("/leave/:id", autenticarToken, async (req: Request, res: Response) => {
+eventRouter.post("/leave", autenticarToken, async (req: Request, res: Response) => {
     const token = req.user!;
-    const idEvent = req.params.id;
+    const { idTicket } = req.body;
 
     try {
-        await eventService.leaveEvent(token, idEvent);
+        await eventService.leaveEvent(token, idTicket);
         res.status(200).send({ message: "Has salido del evento correctamente" });
     } catch (error) {
         const message = error instanceof Error ? error.message : "Error inesperado al salir del evento";

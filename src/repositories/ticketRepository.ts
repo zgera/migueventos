@@ -15,11 +15,10 @@ export class TicketRepository {
         return userEvent;
     }
 
-    static async deleteTicket(idUser: string, idEvent: string): Promise<void> {
+    static async deleteTicket(idTicket: string): Promise<void> {
         await db.ticket.deleteMany({
             where: {
-                idUser,
-                idEvent
+                idTicket
             }
         });
     }

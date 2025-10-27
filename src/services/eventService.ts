@@ -16,7 +16,7 @@ interface participantDetail{
 abstract class accessStrategy {
     abstract access(token: TokenData, event: Event, participants: number, participantsDetails: participantDetail[]): Promise<Ticket>;
 
-    abstract leave(token: TokenData, event: Event): Promise<void>;
+    abstract leave(token: TokenData, event: Event, ticket: Ticket): Promise<void>;
 
     protected calculateTicketAmount(participants: number, price: number): number{
         return participants * price
@@ -58,7 +58,7 @@ class PaidStrategy extends accessStrategy {
         return ticket;
     }
 
-    async leave(token: TokenData, event: Event): Promise<void> {
+    async leave(token: TokenData, event: Event, ticket: Ticket): Promise<void> {
         throw new Error("No se puede salir de un evento pago");
     }
 }
@@ -75,10 +75,12 @@ class FreeStrategy extends accessStrategy {
 
         return ticket;
     }
-    async leave(token: TokenData, event: Event): Promise<void> {
+    async leave(token: TokenData, event: Event, ticket: Ticket): Promise<void> {
         await AuthorizationService.assertParticipant(token, event.idEvent);
-        
-        await TicketRepository.deleteTicket(token.userId, event.idEvent);
+
+        await TicketRepository.deleteTicket(ticket.idTicket);
+
+        await EventRepository.addAssistant(ticket.participants, event.idEvent)
     }
 }
 
@@ -96,14 +98,23 @@ export class EventService {
         return event;
     }
 
+    async getTicket(idTicket: string): Promise<Ticket>{
+        const ticket = await TicketRepository.getTicket(idTicket)
+        if (!ticket){
+            throw new Error("No existe el ticket")
+        }
+        return ticket;
+    }
+
     private selectStrategy(event: Event): accessStrategy {
         return event.free ? new FreeStrategy() : new PaidStrategy();
     }
 
-    async leaveEvent(token: TokenData, idEvent: string): Promise<void> {
-        const event = await this.getEvent(idEvent);
+    async leaveEvent(token: TokenData, idTicket: string): Promise<void> {
+        const ticket = await this.getTicket(idTicket)
+        const event = await this.getEvent(ticket.idEvent);
         const strategy = this.selectStrategy(event);
-        return await strategy.leave(token, event);
+        return await strategy.leave(token, event, ticket);
     }
 
     async accessEvent(token: TokenData, idEvent: string, participants: number, participantsDetails: participantDetail[]): Promise<Ticket> {
