@@ -53,6 +53,8 @@ class PaidStrategy extends accessStrategy {
 
         await this.createTicketDetails(participantsDetails, event, event.price, ticket.idTicket)
 
+        await EventRepository.addAssistant(participants, event.idEvent)
+
         return ticket;
     }
 
@@ -69,10 +71,13 @@ class FreeStrategy extends accessStrategy {
 
         await this.createTicketDetails(participantsDetails, event, 0, ticket.idTicket)
 
+        await EventRepository.addAssistant(participants, event.idEvent)
+
         return ticket;
     }
     async leave(token: TokenData, event: Event): Promise<void> {
         await AuthorizationService.assertParticipant(token, event.idEvent);
+        
         await TicketRepository.deleteTicket(token.userId, event.idEvent);
     }
 }
@@ -120,6 +125,8 @@ export class EventService {
         const ticket = await TicketRepository.createTicket(token.userId, event.idEvent, 1, 0)
 
         await TicketDetailRepository.createTicketDetail(user.firstName, user.lastName, user.document, ticket.idTicket, event.idEvent, 0)
+
+        await EventRepository.addAssistant(1, event.idEvent)
 
         return event;
     }

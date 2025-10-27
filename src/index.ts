@@ -6,6 +6,7 @@ import { authRouter } from "./routers/authRouter";
 import { balanceRouter } from "./routers/balanceRouter";
 import { getterEventRouter } from "./routers/eventGetterRouter";
 import { eventRouter } from "./routers/eventRouter";
+import { userRouter } from "./routers/userRouter";
 
 const app = express();
 const port = 3000;
@@ -24,6 +25,7 @@ app.use("/auth", authRouter);
 app.use("/balance", balanceRouter);
 app.use("/event", eventRouter);
 app.use("/getter", getterEventRouter);
+app.use("/user", userRouter);
 
 // Ruta raíz (opcional)
 app.get("/", (req, res) => {

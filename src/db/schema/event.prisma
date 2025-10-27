@@ -7,6 +7,7 @@ model Event {
     direction String
     creatorID String
     free Boolean
+    assistants Int @default(0)
     cancelled Boolean @default(false)
     price Float?
     completed Boolean @default(false)

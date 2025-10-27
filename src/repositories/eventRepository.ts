@@ -54,4 +54,16 @@ export class EventRepository {
         })
         return event
     }
+
+    static async addAssistant(amount: number, eventId: string): Promise<Event> {
+        const event = await db.event.update({
+            where: {idEvent: eventId},
+            data: {
+                assistants: {
+                    increment: amount
+                }
+            }
+        })
+        return event
+    }
 }
