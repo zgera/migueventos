@@ -32,6 +32,15 @@ export class TicketRepository {
         });
     }
 
+    static async getTicketByUserAndEvent(idEvent: string, idUser: string): Promise<Ticket | null> {
+        return await db.ticket.findFirst({
+            where: {
+                idEvent,
+                idUser
+            }
+        });
+    }
+
     static async getTicketByUserId(idUser: string): Promise<Ticket[]> {
         return await db.ticket.findMany({
             where: { idUser },

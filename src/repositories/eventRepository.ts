@@ -32,6 +32,14 @@ export class EventRepository {
         });
     }
 
+    static async getMyEvents(idUser: string): Promise<Event[]>{
+        return db.event.findMany({
+            where: {
+                creatorID: idUser
+            }
+        })
+    }
+
     static async deleteEvent(idEvent: string): Promise<Event> {
         const event = await db.event.delete({
             where: { idEvent }

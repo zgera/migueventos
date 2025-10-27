@@ -53,11 +53,16 @@ export class GetterEventService {
         return tickets
     }
 
-    async getEvents(token: TokenData): Promise<Event[]> {
-        if (!token) {
-            throw new Error("Token requerido");
-        }
+    async getEvents(): Promise<Event[]> {
         return EventRepository.getEvents();
+    }
+
+    async getMyEvents(token: TokenData): Promise<Event[]> {
+        if (!token){
+            throw new Error("Token requerido")
+        }
+
+        return EventRepository.getMyEvents(token.userId)
     }
 
 }

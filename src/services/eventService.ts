@@ -5,7 +5,6 @@ import { TicketRepository } from "../repositories/ticketRepository";
 import { EventRepository } from "../repositories/eventRepository";
 import { AuthorizationService } from "./authorizationService";
 import { TicketDetailRepository } from "../repositories/ticketDetailRepository";
-import { UserRepository } from "../repositories/userRepository";
 import { UserService } from "./userService";
 
 interface participantDetail{
@@ -48,7 +47,7 @@ class PaidStrategy extends accessStrategy {
 
         const amount = this.calculateTicketAmount(participants, event.price)
 
-        await BalanceService.pay(token, event.price);
+        await BalanceService.pay(token, amount);
 
         const ticket = await TicketRepository.createTicket(token.userId, event.idEvent, participants, amount);
 

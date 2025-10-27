@@ -17,7 +17,7 @@ export class AuthorizationService {
     }
 
     static async isParticipant(token: TokenData, idEvent: string): Promise<boolean> {
-        const ticket = await TicketRepository.getTicket(token.userId, idEvent);
+        const ticket = await TicketRepository.getTicketByUserAndEvent(token.userId, idEvent);
         return !!ticket;
     }
 
