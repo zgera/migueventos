@@ -80,7 +80,7 @@ class FreeStrategy extends accessStrategy {
 
         await TicketRepository.deleteTicket(ticket.idTicket);
 
-        await EventRepository.addAssistant(ticket.participants, event.idEvent)
+        await EventRepository.addAssistant(-ticket.participants, event.idEvent)
     }
 }
 
