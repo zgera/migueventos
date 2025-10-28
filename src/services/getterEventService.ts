@@ -2,11 +2,8 @@ import { TicketRepository } from "../repositories/ticketRepository";
 import { TicketDetailRepository } from "../repositories/ticketDetailRepository";
 import { EventRepository } from "../repositories/eventRepository";
 import { AuthorizationService } from "./authorizationService";
-import { EventService } from "./eventService";
-import { UserService } from "./userService";
 import { TokenData } from "../types/auth";
 import { Event } from "@prisma/client";
-import { User } from "@prisma/client";
 import { Ticket } from "@prisma/client";
 import { TicketDetail } from "@prisma/client";
 

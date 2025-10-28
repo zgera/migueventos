@@ -23,7 +23,10 @@ export class EventRepository {
 
     static async getEvents(): Promise<Event[]> {
         return db.event.findMany({
-            where: { cancelled: false, completed: false }
+            where: { cancelled: false, completed: false },
+            include: {
+                user: true
+            }
         });
     }
 
@@ -37,6 +40,9 @@ export class EventRepository {
         return db.event.findMany({
             where: {
                 creatorID: idUser
+            },
+            include: {
+                user: true
             }
         })
     }
