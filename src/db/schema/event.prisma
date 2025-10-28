@@ -11,6 +11,7 @@ model Event {
     cancelled Boolean @default(false)
     price Float?
     completed Boolean @default(false)
+    imageURL String?
     users   Ticket[]
     participants TicketDetail[]
     user User @relation(fields: [creatorID], references: [idUser])

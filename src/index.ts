@@ -1,6 +1,7 @@
 import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import path from "path";
 
 import { authRouter } from "./routers/authRouter";
 import { balanceRouter } from "./routers/balanceRouter";
@@ -21,6 +22,7 @@ app.use(
   })
 );
 
+app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 app.use("/auth", authRouter);
 app.use("/balance", balanceRouter);
 app.use("/event", eventRouter);

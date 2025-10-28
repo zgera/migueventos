@@ -2,6 +2,8 @@ import { Router, Request, Response } from "express";
 import { EventService } from "../services/eventService";
 import { autenticarToken } from "../middleware/authMiddleware";
 import { TokenData } from "../types/auth";
+import { upload } from "../middleware/upload";
+import { ImageService } from "../services/imageService";
 
 const eventService = new EventService();
 export const eventRouter = Router();
@@ -42,12 +44,13 @@ eventRouter.post("/leave", autenticarToken, async (req: Request, res: Response) 
 /**
  * Crear un nuevo evento
  */
-eventRouter.post("/create", autenticarToken, async (req: Request, res: Response) => {
+eventRouter.post("/create", autenticarToken, upload.single("image"), async (req: Request, res: Response) => {
     const token = req.user!;
     const { title, description, shortDescription, direction, date, price, free } = req.body;
 
     try {
-        const event = await eventService.createEvent(token, title, description, shortDescription, direction, new Date(date), price, free);
+        const imageUrl = await ImageService.uploadEventImage(req);
+        const event = await eventService.createEvent(token, title, description, shortDescription, direction, new Date(date), price, free, imageUrl);
         res.status(201).send({ event });
     } catch (error) {
         const message = error instanceof Error ? error.message : "Error inesperado al crear el evento";

@@ -128,8 +128,8 @@ export class EventService {
         return await strategy.access(token, event, participants, participantsDetails);
     }
 
-    async createEvent(token: TokenData, title: string, description: string, shortDescription: string, direction: string, date: Date, price: number | null, free: boolean): Promise<Event> {
-        const event = await EventRepository.createEvent(title, description, shortDescription, direction, date, price, free, token.userId);
+    async createEvent(token: TokenData, title: string, description: string, shortDescription: string, direction: string, date: Date, price: number | null, free: boolean, imageURL: string | null): Promise<Event> {
+        const event = await EventRepository.createEvent(title, description, shortDescription, direction, date, price, free, token.userId, imageURL);
 
         const user = await this.userService.getUserById(token.userId)
 
