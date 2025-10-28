@@ -22,7 +22,7 @@ app.use(
   })
 );
 
-app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 app.use("/auth", authRouter);
 app.use("/balance", balanceRouter);
 app.use("/event", eventRouter);

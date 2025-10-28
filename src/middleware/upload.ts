@@ -2,7 +2,8 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 
-const uploadDir = path.join(__dirname, "../../uploads/events");
+// 👇 usa la raíz del proyecto como punto de referencia
+const uploadDir = path.join(process.cwd(), "uploads/events");
 
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
