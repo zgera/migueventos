@@ -1,5 +1,5 @@
 import { TokenData } from "../types/auth";
-import { Event, Ticket } from "@prisma/client";
+import { Event, Ticket, TicketDetail } from "@prisma/client";
 import { BalanceService } from "./balanceService";
 import { TicketRepository } from "../repositories/ticketRepository";
 import { EventRepository } from "../repositories/eventRepository";
@@ -30,10 +30,12 @@ abstract class accessStrategy {
         }
     }
 
-    protected async createTicketDetails(participantsDetails: participantDetail[], event: Event, price: number, ticketID: string): Promise<void>{
+    protected async createTicketDetails(participantsDetails: participantDetail[], event: Event, price: number, ticketID: string): Promise<TicketDetail[]>{
+        const ticketsDetails: TicketDetail[] = []
         for (const participant of participantsDetails){
-            await TicketDetailRepository.createTicketDetail(participant.firstName, participant.lastName, participant.document, ticketID, event.idEvent, price)
+            ticketsDetails.push(await TicketDetailRepository.createTicketDetail(participant.firstName, participant.lastName, participant.document, ticketID, event.idEvent, price))
         }
+        return ticketsDetails
     }
 }
 
