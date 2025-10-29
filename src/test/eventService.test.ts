@@ -189,4 +189,46 @@ describe("EventService tests ready to run", () => {
     expect(mockEventRepo.deleteEvent).toHaveBeenCalledWith(event.idEvent);
     expect(result).toEqual(event);
   });
+  
+  // DUPLICATE PARTICIPANT TEST
+  it("should throw when trying to add a participant with duplicate document", async () => {
+    const event = { ...dummyEvent, free: true } as unknown as Event;
+    const ticket = {
+      idTicket: "t1",
+      idEvent: "ev1",
+      idUser: "user1",
+      amount: 0,
+      participants: 1,
+    } as unknown as Ticket;
+
+    const participant = { firstName: "John", lastName: "Doe", document: 123 };
+
+    // Primer llamado: participante no existe
+    mockEventRepo.getEventById.mockResolvedValue(event);
+    mockTicketRepo.createTicket.mockResolvedValue(ticket);
+    mockTicketDetailRepo.getDetailByDocumentAndEvent.mockResolvedValueOnce(null);
+    mockTicketDetailRepo.createTicketDetail.mockResolvedValue(
+      {
+        idTicketDetail: "d1",
+        eventID: "ev1",
+        ticketID: "t1",
+        firstName: "John",
+        lastName: "Doe",
+        document: 123,
+        amount: 0,
+      } as unknown as TicketDetail
+    );
+
+    const result = await service.accessEvent(token, event.idEvent, 1, [participant]);
+    expect(result).toEqual(ticket);
+
+    // Segundo intento con el mismo DNI: debe fallar
+    mockTicketDetailRepo.getDetailByDocumentAndEvent.mockResolvedValueOnce(
+      {} as unknown as TicketDetail
+    );
+
+    await expect(service.accessEvent(token, event.idEvent, 1, [participant])).rejects.toThrow(
+      "Un participante ya asiste al evento"
+    );
+  });
 });
