@@ -10,14 +10,14 @@ import { eventRouter } from "./routers/eventRouter";
 import { userRouter } from "./routers/userRouter";
 
 const app = express();
-const port = 3000;
+const port = 8080;
 
 // Middleware global
 app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "http://localhost:5173", // Cambiar según tu front
+    origin: process.env.CLIENT_URL || "http://localhost:3000", // Cambiar según tu front
     credentials: true,
   })
 );

@@ -8,6 +8,9 @@ import { Ticket } from "@prisma/client";
 import { TicketDetail } from "@prisma/client";
 
 export class GetterEventService {
+    getEventById(idEvent: string) {
+        return EventRepository.getEventById(idEvent)
+    }
     
 
     async getTicket(ticketID: string): Promise<Ticket>{

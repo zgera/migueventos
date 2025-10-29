@@ -16,6 +16,24 @@ authRouter.post("/signup", async (req: Request, res: Response) => {
 
     try {
         const user = await authenticationService.signUp(userBody);
+
+        const tokenData: TokenData = {
+            userId: user.idUser,
+            username: user.username,
+        };
+
+        const token = JWTService.createToken(tokenData);
+
+        res
+            .cookie("access_token", token, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === "production",
+                sameSite: "strict",
+                maxAge: 1000 * 60 * 60, // 1 hora
+            })
+            .status(200)
+            .send({ user });
+
         res.status(201).send({ user });
     } catch (error) {
         const message = error instanceof Error ? error.message : "Error inesperado al registrarse";
@@ -52,4 +70,15 @@ authRouter.post("/signin", async (req: Request, res: Response) => {
         const message = error instanceof Error ? error.message : "Error inesperado al iniciar sesión";
         res.status(401).send({ error: message });
     }
+});
+
+authRouter.post("/signout", (req: Request, res: Response) => {
+    res
+        .clearCookie("access_token", {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+        })
+        .status(200)
+        .send({ message: "Cierre de sesión exitoso" });
 });

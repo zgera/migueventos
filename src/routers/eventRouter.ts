@@ -28,9 +28,9 @@ eventRouter.post("/access/:id", autenticarToken, async (req: Request, res: Respo
 /**
  * Abandonar un evento (devolver entrada o cancelar asistencia)
  */
-eventRouter.post("/leave", autenticarToken, async (req: Request, res: Response) => {
+eventRouter.post("/leave/:id", autenticarToken, async (req: Request, res: Response) => {
     const token = req.user!;
-    const { idTicket } = req.body;
+    const idTicket = req.params.id;
 
     try {
         await eventService.leaveEvent(token, idTicket);
@@ -46,11 +46,16 @@ eventRouter.post("/leave", autenticarToken, async (req: Request, res: Response) 
  */
 eventRouter.post("/create", autenticarToken, upload.single("image"), async (req: Request, res: Response) => {
     const token = req.user!;
-    const { title, description, shortDescription, direction, date, price, free } = req.body;
+    const { title, description, shortDescription, direction, date, price, free, category } = req.body;
 
     try {
+        const freeBoolean = free === 'true';
+        const priceNumber = price ? parseFloat(price) : null;
+        const eventDate = new Date(date);
+
+
         const imageUrl = await ImageService.uploadEventImage(req);
-        const event = await eventService.createEvent(token, title, description, shortDescription, direction, new Date(date), price, free, imageUrl);
+        const event = await eventService.createEvent(token, title, description, shortDescription, direction, eventDate, priceNumber, freeBoolean, imageUrl, category);
         res.status(201).send({ event });
     } catch (error) {
         const message = error instanceof Error ? error.message : "Error inesperado al crear el evento";

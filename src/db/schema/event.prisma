@@ -1,3 +1,13 @@
+enum EventCategory {
+    CUMPLEAÑOS
+    DEPORTE
+    CONCIERTO
+    CASUAL
+    SOCIAL
+    FIESTA
+    OTRO
+}
+
 model Event {
     idEvent String @id @default(cuid())
     title String 
@@ -7,6 +17,7 @@ model Event {
     direction String
     creatorID String
     free Boolean
+    category EventCategory @default(OTRO)
     assistants Int @default(0)
     cancelled Boolean @default(false)
     price Float?

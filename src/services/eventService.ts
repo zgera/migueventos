@@ -6,6 +6,7 @@ import { EventRepository } from "../repositories/eventRepository";
 import { AuthorizationService } from "./authorizationService";
 import { TicketDetailRepository } from "../repositories/ticketDetailRepository";
 import { UserService } from "./userService";
+import { EventCategory, stringToEventTag } from "./categoryService";
 
 interface participantDetail{
     firstName: string,
@@ -78,7 +79,9 @@ class FreeStrategy extends accessStrategy {
         return ticket;
     }
     async leave(token: TokenData, event: Event, ticket: Ticket): Promise<void> {
-        await AuthorizationService.assertParticipant(token, event.idEvent);
+        if (ticket.idUser !== token.userId){
+            throw new Error("El ticket no es tuyo")
+        }
 
         await TicketRepository.deleteTicket(ticket.idTicket);
 
@@ -127,11 +130,14 @@ export class EventService {
         }
 
         const strategy = this.selectStrategy(event);
+
         return await strategy.access(token, event, participants, participantsDetails);
     }
 
-    async createEvent(token: TokenData, title: string, description: string, shortDescription: string, direction: string, date: Date, price: number | null, free: boolean, imageURL: string | null): Promise<Event> {
-        const event = await EventRepository.createEvent(title, description, shortDescription, direction, date, price, free, token.userId, imageURL);
+    async createEvent(token: TokenData, title: string, description: string, shortDescription: string, direction: string, date: Date, price: number | null, free: boolean, imageURL: string | null, category: EventCategory): Promise<Event> {
+        const categoryEnum = stringToEventTag(category);
+        
+        const event = await EventRepository.createEvent(title, description, shortDescription, direction, date, price, free, token.userId, imageURL, categoryEnum);
 
         const user = await this.userService.getUserById(token.userId)
 

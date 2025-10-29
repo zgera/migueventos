@@ -1,10 +1,11 @@
 import { Event } from "@prisma/client";
 
 import { db } from "../db/db";
+import { EventCategory } from "../services/categoryService";
 
 export class EventRepository {
 
-    static async createEvent(title: string, description: string, shortDescription: string, direction: string, date: Date, price: number | null, free: boolean, creatorID: string, imageURL: string | null): Promise<Event> {
+    static async createEvent(title: string, description: string, shortDescription: string, direction: string, date: Date, price: number | null, free: boolean, creatorID: string, imageURL: string | null, category: EventCategory): Promise<Event> {
         const event = await db.event.create({
             data: {
                 title,
@@ -14,6 +15,7 @@ export class EventRepository {
                 direction,
                 creatorID: creatorID,
                 free: free,
+                category: category,
                 price: price,
                 imageURL
             }
@@ -47,11 +49,33 @@ export class EventRepository {
         })
     }
 
-    static async deleteEvent(idEvent: string): Promise<Event> {
+/*     static async deleteEvent(idEvent: string): Promise<Event> {
         const event = await db.event.delete({
             where: { idEvent }
         });
         return event;
+    } */
+
+    static async deleteEvent(idEvent: string): Promise<Event> {
+            await db.ticketDetail.deleteMany({
+                where: {
+                    eventID: idEvent
+                }
+            });
+
+            await db.ticket.deleteMany({
+                where: {
+                    idEvent: idEvent
+                }
+            });
+
+            const deletedEvent = await db.event.delete({
+                where: {
+                    idEvent: idEvent
+                }
+            });
+
+            return deletedEvent;
     }
 
     static async completeEvent(idEvent: string): Promise<Event> {

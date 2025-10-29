@@ -74,12 +74,22 @@ getterEventRouter.get("/event/:id/tickets", autenticarToken, async (req: Request
  * Obtener todos los eventos (visibles para cualquier usuario, no autenticado)
  */
 getterEventRouter.get("/events", async (req: Request, res: Response) => {
-
     try {
         const events = await getterEventService.getEvents();
         res.status(200).send({ events });
     } catch (error) {
         const message = error instanceof Error ? error.message : "Error inesperado al obtener los eventos";
+        res.status(401).send({ error: message });
+    }
+});
+
+getterEventRouter.get("/event/:id", async (req: Request, res: Response) => {
+    const idEvent = req.params.id;
+    try {
+        const event = await getterEventService.getEventById(idEvent);
+        res.status(200).send({ event });
+    } catch (error) {
+        const message = error instanceof Error ? error.message : "Error inesperado al obtener el evento";
         res.status(401).send({ error: message });
     }
 });
